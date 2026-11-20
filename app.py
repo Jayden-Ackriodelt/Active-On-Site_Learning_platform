@@ -2,7 +2,8 @@ import datetime
 import json
 import os
 import random
-import smtplib
+import urllib.error
+import urllib.request
 import time
 from email.message import EmailMessage
 
@@ -58,29 +59,46 @@ with app.app_context():
 
 
 def send_signup_verification_email(to_email: str, code: str) -> bool:
-  smtp_email = (os.environ.get("MAIL_USERNAME") or "").strip()
-  smtp_password = (os.environ.get("MAIL_PASSWORD") or "").strip()
-  if not smtp_email or not smtp_password:
+  api_key = (os.environ.get("RESEND_API_KEY") or "").strip()
+  from_email = (
+    os.environ.get("MAIL_FROM") or "AOLP Learning <onboarding@resend.dev>"
+  ).strip()
+
+  if not api_key:
+    app.logger.error("RESEND_API_KEY is missing in environment variables.")
     return False
 
-  msg = EmailMessage()
-  msg["Subject"] = "AOLP Sign Up Verification Code"
-  msg["From"] = smtp_email
-  msg["To"] = to_email
-  msg.set_content(
-      "Welcome to AOLP Learning Platform!\n\n"
-      f"Your 6-digit sign up verification code is: {code}\n"
-      "This code will expire in 5 minutes.\n\n"
-      "Please enter this code to verify your email and create your password."
+  payload = {
+    "from": from_email,
+    "to": [to_email],
+    "subject": "AOLP Sign Up Verification Code",
+    "html": (
+      "<p>Welcome to AOLP Learning Platform!</p>"
+      f"<p>Your 6-digit sign up verification code is: <strong>{code}</strong></p>"
+      "<p>This code will expire in 5 minutes.</p>"
+      "<p>Please enter this code to verify your email and create your password.</p>"
+    ),
+  }
+
+  req = urllib.request.Request(
+    url="https://api.resend.com/emails",
+    data=json.dumps(payload).encode("utf-8"),
+    headers={
+      "Authorization": f"Bearer {api_key}",
+      "Content-Type": "application/json",
+    },
+    method="POST",
   )
 
   try:
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
-      server.login(smtp_email, smtp_password)
-      server.send_message(msg)
-    return True
-  except Exception as exc:
-    app.logger.error("Failed to send verification email: %s", exc)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+      return 200 <= resp.status < 300
+  except urllib.error.HTTPError as e:
+    err_body = e.read().decode("utf-8", errors="ignore")
+    app.logger.error(f"Resend HTTP error {e.code}: {err_body}")
+    return False
+  except Exception as e:
+    app.logger.error(f"Failed to send verification email via Resend: {e}")
     return False
 
 

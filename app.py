@@ -149,11 +149,11 @@ def signup_send_code():
         400,
     )
 
-  if email == "kyawzinlatt.esl.edu@gmail.com":
-    return (
-        jsonify({"message": "This email is reserved for administrator."}),
-        400,
-    )
+  # if email == "kyawzinlatt.esl.edu@gmail.com":
+  #   return (
+  #       jsonify({"message": "This email is reserved for administrator."}),
+  #       400,
+  #   )
 
   if User.query.filter_by(email=email).first():
     return (

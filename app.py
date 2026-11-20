@@ -83,9 +83,10 @@ def send_signup_verification_email(to_email: str, code: str) -> bool:
   req = urllib.request.Request(
     url="https://api.resend.com/emails",
     data=json.dumps(payload).encode("utf-8"),
-    headers={
+    headers = {
       "Authorization": f"Bearer {api_key}",
       "Content-Type": "application/json",
+      "User-Agent": "AOLP-Learning-Platform/1.0",
     },
     method="POST",
   )

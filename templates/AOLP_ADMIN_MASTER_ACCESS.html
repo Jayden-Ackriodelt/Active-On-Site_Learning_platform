@@ -159,6 +159,31 @@
                 </button>
             </div>
         </div>
+        <!-- MOBILE NAVIGATION BAR (VISIBLE ON PHONE SCREENS) -->
+        <div class="md:hidden sticky top-[76px] z-30 glass-nav px-3 py-2 border-b border-white/10 overflow-x-auto">
+            <div class="flex items-center gap-2 min-w-max">
+                <button onclick="navigateTo('sound-engine')" id="mnav-sound-engine" class="px-3 py-1.5 text-xs font-bold text-emerald-300 hover:text-white bg-emerald-500/15 rounded-xl border border-emerald-400/30 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Sound Engine</span>
+                </button>
+                <button onclick="navigateTo('catalog')" id="mnav-catalog" class="px-3 py-1.5 text-xs font-bold rounded-xl glass-btn text-white inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                    <span>Catalog</span>
+                </button>
+                <button onclick="navigateTo('stories')" id="mnav-stories" class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 rounded-xl border border-white/10 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Stories</span>
+                </button>
+                <button onclick="navigateTo('classroom')" id="mnav-classroom" class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 rounded-xl border border-white/10 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="monitor-play" class="w-3.5 h-3.5 text-cyan-300"></i>
+                    <span>Classroom</span>
+                </button>
+                <button onclick="navigateTo('admin')" id="mnav-admin" style="display: none;" class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 rounded-xl border border-white/10 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Admin</span>
+                </button>
+            </div>
+        </div>
     </header>
 
     <!-- MAIN APP CONTAINER -->
@@ -1292,12 +1317,22 @@
             ['catalog', 'classroom', 'stories', 'sound-engine', 'admin'].forEach(p => {
                 const sec = document.getElementById(`page-${p}`);
                 if (sec) sec.classList.add('hidden');
+
                 const navBtn = document.getElementById(`nav-${p}`);
                 if (navBtn) {
                     if (p === 'sound-engine') {
                         navBtn.className = "px-4 py-2 text-sm font-bold text-emerald-300 hover:text-white hover:bg-emerald-500/20 rounded-xl transition-all inline-flex items-center gap-2 border border-emerald-400/30 whitespace-nowrap";
                     } else {
                         navBtn.className = "px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all inline-flex items-center gap-2 whitespace-nowrap";
+                    }
+                }
+
+                const mNavBtn = document.getElementById(`mnav-${p}`);
+                if (mNavBtn) {
+                    if (p === 'sound-engine') {
+                        mNavBtn.className = "px-3 py-1.5 text-xs font-bold text-emerald-300 hover:text-white bg-emerald-500/15 rounded-xl border border-emerald-400/30 inline-flex items-center gap-1.5 whitespace-nowrap";
+                    } else {
+                        mNavBtn.className = "px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 rounded-xl border border-white/10 inline-flex items-center gap-1.5 whitespace-nowrap";
                     }
                 }
             });
@@ -1311,6 +1346,15 @@
                     activeNav.className = "px-4 py-2 text-sm font-bold rounded-xl transition-all bg-emerald-600 text-white inline-flex items-center gap-2 shadow-lg shadow-emerald-600/30 whitespace-nowrap";
                 } else {
                     activeNav.className = "px-4 py-2 text-sm font-bold rounded-xl transition-all glass-btn text-white inline-flex items-center gap-2 whitespace-nowrap";
+                }
+            }
+
+            const activeMNav = document.getElementById(`mnav-${pageId}`);
+            if (activeMNav) {
+                if (pageId === 'sound-engine') {
+                    activeMNav.className = "px-3 py-1.5 text-xs font-bold rounded-xl transition-all bg-emerald-600 text-white inline-flex items-center gap-1.5 shadow-lg whitespace-nowrap";
+                } else {
+                    activeMNav.className = "px-3 py-1.5 text-xs font-bold rounded-xl transition-all glass-btn text-white inline-flex items-center gap-1.5 whitespace-nowrap";
                 }
             }
 
@@ -1975,14 +2019,16 @@
 
         function updateUserUI() {
             const adminNavBtn = document.getElementById('nav-admin');
-            if (isCurrentUserAdmin()) adminNavBtn.style.display = 'inline-flex';
-            else adminNavBtn.style.display = 'none';
+            const mAdminNavBtn = document.getElementById('mnav-admin');
+            const isAdmin = isCurrentUserAdmin();
+            if (adminNavBtn) adminNavBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+            if (mAdminNavBtn) mAdminNavBtn.style.display = isAdmin ? 'inline-flex' : 'none';
 
             if (currentUser) {
                 document.getElementById('auth-btn-trigger').classList.add('hidden');
                 document.getElementById('user-info-bar').classList.remove('hidden');
                 document.getElementById('user-info-bar').classList.add('flex');
-                
+
                 const displayName = currentUser.nickname || currentUser.name || 'User';
                 document.getElementById('user-display-name').innerText = displayName;
                 document.getElementById('user-display-email').innerText = currentUser.email;

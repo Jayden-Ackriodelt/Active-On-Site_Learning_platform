@@ -1744,12 +1744,18 @@
             }
         };
 
-        window.completePasswordReset = function(e) {
+        window.completePasswordReset = async function(e) {
             e.preventDefault();
             const newPass = document.getElementById('forgot-new-pass').value;
             const confirmPass = document.getElementById('forgot-confirm-pass').value;
             const errorDiv = document.getElementById('forgot-error');
             errorDiv.classList.add('hidden');
+
+            if (newPass.length < 6) {
+                errorDiv.innerText = 'Password must be at least 6 characters long.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
 
             if (newPass !== confirmPass) {
                 errorDiv.innerText = 'Passwords do not match. Please re-enter.';
@@ -1757,15 +1763,27 @@
                 return;
             }
 
-            const userIndex = usersDb.findIndex(u => u.email.toLowerCase() === pendingForgotData.email.toLowerCase());
-            if (userIndex !== -1) {
-                usersDb[userIndex].password = newPass;
-                currentUser = usersDb[userIndex];
-                saveState();
+            try {
+                const res = await fetch('/api/forgot-password/reset', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ password: newPass })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                    errorDiv.innerText = data.message || 'Failed to reset password.';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+
                 closeModal('modal-auth');
-                updateUserUI();
-                renderCourses();
-                alert('Password reset successful! You are now logged in with your new password.');
+                switchAuthTab('login');
+                alert('Password reset successful! Please log in with your new password.');
+            } catch (err) {
+                errorDiv.innerText = 'Cannot connect to server. Please try again.';
+                errorDiv.classList.remove('hidden');
             }
         };
 

@@ -1669,54 +1669,79 @@
             lucide.createIcons();
         };
 
-        window.sendForgotOTP = function() {
+        window.sendForgotOTP = async function() {
             const email = document.getElementById('forgot-email').value.trim().toLowerCase();
             const errorDiv = document.getElementById('forgot-error');
             errorDiv.classList.add('hidden');
 
-            if (email === ADMIN_EMAIL.toLowerCase()) {
-                errorDiv.innerText = 'Administrator password cannot be reset via user portal.';
+            if (!email || !email.includes('@')) {
+                errorDiv.innerText = 'Please enter a valid email address.';
                 errorDiv.classList.remove('hidden');
                 return;
             }
 
-            const existingUser = usersDb.find(u => u.email.toLowerCase() === email);
-            if (!existingUser) {
-                errorDiv.innerText = 'No account found with this email address. Please Sign Up first.';
+            try {
+                const res = await fetch('/api/forgot-password/send-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                    errorDiv.innerText = data.message || 'Failed to send reset code.';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+
+                pendingForgotData = { email, otp: '' };
+                document.getElementById('forgot-step-1').classList.add('hidden');
+                document.getElementById('forgot-step-2').classList.remove('hidden');
+                document.getElementById('forgot-otp-input').value = '';
+                document.getElementById('forgot-otp-notice').innerHTML = `
+                    We sent a 6-digit password reset code to <strong class="text-white">${email}</strong>. Please check your inbox or spam folder.
+                `;
+                lucide.createIcons();
+            } catch (err) {
+                errorDiv.innerText = 'Cannot connect to server. Please try again.';
                 errorDiv.classList.remove('hidden');
-                return;
             }
-
-            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            pendingForgotData = { email, otp: generatedOtp };
-
-            document.getElementById('forgot-step-1').classList.add('hidden');
-            document.getElementById('forgot-step-2').classList.remove('hidden');
-            document.getElementById('forgot-otp-input').value = '';
-
-            document.getElementById('forgot-otp-notice').innerHTML = `
-                We sent a 6-digit password reset code to <strong class="text-white">${email}</strong>.<br>
-                <span class="inline-block mt-1 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40 font-mono">
-                    [Demo Email Inbox Code: <strong>${generatedOtp}</strong>]
-                </span>
-            `;
-            lucide.createIcons();
         };
 
-        window.verifyForgotOTP = function() {
+        window.verifyForgotOTP = async function() {
             const enteredOtp = document.getElementById('forgot-otp-input').value.trim();
             const errorDiv = document.getElementById('forgot-error');
             errorDiv.classList.add('hidden');
 
-            if (enteredOtp !== pendingForgotData.otp) {
-                errorDiv.innerText = 'Incorrect 6-digit reset code. Please check and try again.';
+            if (!enteredOtp) {
+                errorDiv.innerText = 'Please enter the 6-digit reset code.';
                 errorDiv.classList.remove('hidden');
                 return;
             }
 
-            document.getElementById('forgot-step-2').classList.add('hidden');
-            document.getElementById('forgot-step-3').classList.remove('hidden');
-            lucide.createIcons();
+            try {
+                const res = await fetch('/api/forgot-password/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ code: enteredOtp })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok || !data.verified) {
+                    errorDiv.innerText = data.message || 'Incorrect 6-digit reset code.';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('forgot-step-2').classList.add('hidden');
+                document.getElementById('forgot-step-3').classList.remove('hidden');
+                lucide.createIcons();
+            } catch (err) {
+                errorDiv.innerText = 'Cannot connect to server. Please try again.';
+                errorDiv.classList.remove('hidden');
+            }
         };
 
         window.completePasswordReset = function(e) {

@@ -289,6 +289,82 @@ def signup_complete():
         "officialName": new_user.official_name,
     }), 201
 
+@app.route("/api/forgot-password/send-code", methods=["POST"])
+def forgot_password_send_code():
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+
+    if not email or "@" not in email:
+        return jsonify({"message": "Please enter a valid email address."}), 400
+
+    if email == "kyawzinlatt.esl.edu@gmail.com":
+        return jsonify({"message": "Administrator password cannot be reset from here."}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"message": "No account found with this email address."}), 404
+
+    code = f"{random.randint(0, 999999):06d}"
+    session["pending_reset"] = {
+        "email": email,
+        "code": code,
+        "expires_at": time.time() + 300,  # 5 minutes
+        "verified": False,
+    }
+
+    sent = send_signup_verification_email(email, code)
+    if not sent:
+        session.pop("pending_reset", None)
+        return jsonify({"message": "Unable to send reset code email. Please try again."}), 500
+
+    return jsonify({"message": f"A 6-digit password reset code was sent to {email}."}), 200
+
+
+@app.route("/api/forgot-password/verify-code", methods=["POST"])
+def forgot_password_verify_code():
+    data = request.get_json(silent=True) or {}
+    entered_code = (data.get("code") or data.get("otp") or "").strip()
+    pending = session.get("pending_reset")
+
+    if not pending:
+        return jsonify({"message": "No password reset request found. Please request a new code."}), 400
+
+    if time.time() > pending.get("expires_at", 0):
+        session.pop("pending_reset", None)
+        return jsonify({"message": "Reset code has expired. Please request a new code."}), 400
+
+    if not entered_code or entered_code != pending.get("code"):
+        return jsonify({"message": "Invalid 6-digit reset code."}), 400
+
+    pending["verified"] = True
+    session["pending_reset"] = pending
+    return jsonify({"verified": True, "message": "Code verified! Set new password."}), 200
+
+
+@app.route("/api/forgot-password/reset", methods=["POST"])
+def forgot_password_reset():
+    data = request.get_json(silent=True) or {}
+    new_password = data.get("password") or ""
+    pending = session.get("pending_reset")
+
+    if not pending or not pending.get("verified"):
+        return jsonify({"message": "Please verify the reset code first."}), 403
+
+    if len(new_password) < 6:
+        return jsonify({"message": "Password must be at least 6 characters long."}), 400
+
+    user = User.query.filter_by(email=pending["email"]).first()
+    if not user:
+        session.pop("pending_reset", None)
+        return jsonify({"message": "User account not found."}), 404
+
+    user.password = generate_password_hash(new_password)
+    db.session.commit()
+    session.pop("pending_reset", None)
+
+    return jsonify({
+        "message": "Password updated successfully. You can now log in with your new password."
+    }), 200
 
 @app.route("/api/login", methods=["POST"])
 def login():

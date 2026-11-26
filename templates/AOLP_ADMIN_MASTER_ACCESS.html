@@ -875,34 +875,59 @@
                     { 
                         id: 1, title: 'What is language', duration: '30 mins', videoId: 'gyDkTouWUeM',
                         mcq: [
-                            { q: 'What is the primary purpose of language?', options: ['Human communication and sharing ideas', 'Only memorizing grammar rules', 'Silent reading only', 'Drawing pictures'], correct: 1 },
-                            { q: 'Which four core skills make up complete language fluency?', options: ['Listening, Speaking, Reading, Writing', 'Running, Jumping, Singing, Dancing', 'Typing, Clicking, Scrolling, Saving', 'Spelling, Counting, Coloring, Drawing'], correct: 1 },
-                            { q: 'What is Alphabet?', options: ['letter', 'A-Z', 'Word', 'abcd'], correct: 0 },
-                            { q: 'how many alphabet are there?', options: ['26', '21', '5', '33'], correct: 0 },
+                            { q: 'ဘာသာစကားဆိုတာဘာလဲ?', options: ['ဆက်သွယ်ခြင်းနှင့်အိုင်ဒီယာများ', 'သဒ္ဒါကိုနားလည်ခြင်း', 'အပြန်အလှန်နားလည်ခြင်း', '၃ ခုစလုံး'], correct: 2 },
+                            { q: 'ဘာသာစကားတစ်ခုကို ကျွမ်းကျင်စွာတတ်မြောက်ရန်အတွက် အခြေခံကျွမ်းကျင်မှု လေးမျိုးမှာ အဘယ်နည်း။', options: ['Listening, Speaking, Reading, Writing', 'Running, Jumping, Singing, Dancing', 'Typing, Clicking, Scrolling, Saving', 'Spelling, Counting, Coloring, Drawing'], correct: 0 },
+                            { q: 'စကားကို ကျွမ်းကျွမ်းကျင်ကျင် ပြောဆိုနိုင်လိုပါက မည်သည့်အရာများကို လေ့ကျင့်သင့်သနည်း။', options: ['listening-Speaking', 'Reading- Writing', 'Speaking-Reading', 'Writing-Speaking'], correct: 0 },
+                            { q: 'ဘယ်ဟာက ယဉ်ကျေးတဲ့ အသုံးအနှုန်းလဲ။', options: ['I can help', 'Let me help', 'Would you mind if I help', 'do you need help'], correct: 2 },
                         ],
                         matching: [
-                            { term: 'Speaking', definition: 'Producing spoken words to express thoughts' },
-                            { term: 'Listening', definition: 'Receiving and understanding spoken messages' }
+                            { term: 'Speaking', definition: 'အတွေးအမြင်များကို ဖော်ပြရန် စကားလုံးများ ပြောဆိုထုတ်ဖော်ခြင်း' },
+                            { term: 'Listening', definition: 'နှုတ်ဖြင့် ပြောဆိုသော သတင်းစကားများကို လက်ခံရယူခြင်းနှင့် နားလည်သဘောပေါက်ခြင်း' }
                         ]
                     },
                     { 
                         id: 2, title: 'Alphabet', duration: '21 mins', videoId: 'oIjOoIGEy18',
                         mcq: [
-                            { q: 'How many letters are in the modern English alphabet?', options: ['24 letters', '26 letters', '28 letters', '30 letters'], correct: 1 }
+                            { q: 'တစ်စုံတစ်ယောက်က သင့်ကို နှုတ်ဆက်လာရင် သင် ဘယ်လို ပြန်ပြောမလဲ။', options: ['No', 'Nice to meet you', 'Sorry', 'nothing'], correct: 1 },
+                            { q: 'ခေတ်သစ် အင်္ဂလိပ် အက္ခရာစဉ်တွင် အက္ခရာမည်မျှ ပါဝင်သနည်း။', options: ['24 letters', '26 letters', '28 letters', '30 letters'], correct: 1 }
                         ],
                         matching: [
                             { term: 'Uppercase', definition: 'Capital letters (A, B, C)' },
                             { term: 'Lowercase', definition: 'Small letters (a, b, c)' }
                         ]
                     },
-                    { id: 3, title: 'Phonics', duration: '23 mins', videoId: '4g8f_8ofXDY' },
-                    { id: 4, title: 'Sound creation', duration: '34 mins', videoId: 'hggaqWHqQHA' },
-                    { id: 5, title: 'Consonant & Vowel', duration: '15 mins', videoId: '5qap5aO4i9A' },
-                    { id: 6, title: 'Numbers pronunciation', duration: '15 mins', videoId: 'L_LUpnjgPso' },
-                    { id: 7, title: 'Number counting', duration: '15 mins', videoId: 'Y9j4GJv_vAE' },
-                    { id: 8, title: 'Colors', duration: '15 mins', videoId: 'f0t0gX32_1I' },
-                    { id: 9, title: 'Sentence Structure', duration: '15 mins', videoId: 'kJQP7kiw5Fk' },
-                    { id: 10, title: 'Pattern-1', duration: '15 mins', videoId: '2Vv-BfVoq4g' },
+                    {
+                        id: 3, title: 'Phonics', duration: '24 mins', videoId: '4g8f_8ofXDY',
+                        mcq: [
+                            { q: 'ဘယ်တစ်ခုက အသံတူလဲ။', options: ['Z & S', 'D & T', 'F & S', 'C & K'], correct: 3 },
+                            { q: 've နှင့် ဘယ်တစ်ခုက အသံတူလဲ?', options: ['V', 'F', 'E', 'nothing'], correct: 1 }
+                        ],
+                        matching: [
+                            { term: 'X သည် ', definition: 'CS နှင့်အသံတူသည်' },
+                            { term: 'ce သည် ', definition: 'S နှင့်အသံတူသည်' },
+                            { term: 'gh သည် ', definition: 'F နှင့်အသံတူသည်' }
+
+                        ]
+                    },
+                    { id: 4, title: 'Sound creation', duration: '18 mins', videoId: 'hggaqWHqQHA',
+                        mcq: [
+                            { q: 'vowel (သရ) ဘယ်နှစ်လုံးရှိသလဲ?', options: ['၂၆', '၅', '၂၁', '၃၃'], correct: 1 },
+                            { q: 'ဤ Jealous စာလုံးတွင် သရမည်မျှပါဝင်သနည်း။', options: ['3', '2', '4', '8'], correct: 2 },
+                            { q: 'ဤ Jealous စာလုံးတွင် အသံ မည်မျှပါဝင်သနည်း။', options: ['3', '2', '4', '8'], correct: 1 },
+                            { q: 'ဗျည်းများဆိုသည်မှာ အဘယ်နည်း။', options: ['a,e,i,o,u', 'w,y', 'a,e,i,o,u မှအပ A to Z', 'nothing'], correct: 2 }
+                        ],
+                        matching: [
+                            { term: 'a,e,i,o,u သည် ', definition: 'သရ' },
+                            { term: 'w,y သည် ', definition: 'semi-သရ' },
+                            { term: ' a,e,i,o,u မှအပ A to Z သည်', definition: 'ဗျည်း' }
+                        ]
+                    },
+                    { id: 5, title: 'Consonant & Vowel', duration: '31 mins', videoId: 'Cu_iEr-3IzA' },
+                    { id: 6, title: 'Numbers pronunciation', duration: '24 mins', videoId: 'l1AL5S10gUA' },
+                    { id: 7, title: 'Number counting', duration: '25 mins', videoId: 'iJ7w34yIrfY' },
+                    { id: 8, title: 'Colors', duration: '10 mins', videoId: 'iLIern5KwTo' },
+                    { id: 9, title: 'Sentence Structure', duration: '19 mins', videoId: 'A1s1ss9aCkA' },
+                    { id: 10, title: 'Pattern-1', duration: '25 mins', videoId: 'iASIL2IpMJM' },
                     { id: 11, title: 'Pattern-2', duration: '15 mins', videoId: '5qap5aO4i9A' },
                     { id: 12, title: 'Pattern-3', duration: '15 mins', videoId: 'L_LUpnjgPso' },
                     { id: 13, title: 'Shadowing & personal info', duration: '15 mins', videoId: 'Y9j4GJv_vAE' },
